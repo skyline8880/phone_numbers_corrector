@@ -1,0 +1,6 @@
+pandas==1.5.3
+pillow==9.5.0
+pyinstaller==5.9.0
+xlrd==2.0.1
+openpyxl==3.1.2
+isort==5.12.0
