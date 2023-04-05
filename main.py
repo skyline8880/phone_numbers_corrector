@@ -197,7 +197,8 @@ class FileEditorApp(tkinter.Tk):
                         self.label_repeat_numbers[
                             'text'] = f'Повторяющиеся: {repeat_count}'
                         corrected_nums = (length_before_clean 
-                                          - exlcuded_counter)
+                                          - exlcuded_counter
+                                          - repeat_count)
                         self.label_correct_numbers[
                             'text'] = f'Корректные номера: {corrected_nums}'
             except FileNotFoundError:
