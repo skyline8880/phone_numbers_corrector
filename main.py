@@ -1,8 +1,9 @@
-import tkinter
-from tkinter import filedialog, messagebox, ttk, PhotoImage, StringVar
-import pandas as pd
 import os
 import sys
+import tkinter
+from tkinter import PhotoImage, StringVar, filedialog, messagebox, ttk
+
+import pandas as pd
 
 
 def resource_path(relative_path):
@@ -50,23 +51,27 @@ class FileEditorApp(tkinter.Tk):
         self.phone_workplace.place(x=270, y=5)
         self.label_all_numbers = tkinter.Label(
             self, text='')
-        self.label_all_numbers.place(x=280, y=25)
+        self.label_all_numbers.place(x=280, y=20)
         self.label_changed_numbers = tkinter.Label(
             self, text='')
-        self.label_changed_numbers.place(x=280, y=50)
-        self.label_excluded_numbers = tkinter.Label(
+        self.label_changed_numbers.place(x=280, y=40)
+        self.label_invalid_numbers = tkinter.Label(
             self, text='')
-        self.label_excluded_numbers.place(x=280, y=75)
+        self.label_invalid_numbers.place(x=280, y=60)
         self.label_repeat_numbers = tkinter.Label(
             self, text='')
-        self.label_repeat_numbers.place(x=280, y=100)
+        self.label_repeat_numbers.place(x=280, y=80)
+        self.label_excluded_numbers = tkinter.Label(
+            self, text='')
+        self.label_excluded_numbers.place(x=280, y=100)        
         self.label_correct_numbers = tkinter.Label(
             self, text='')
-        self.label_correct_numbers.place(x=280, y=125)
+        self.label_correct_numbers.place(x=280, y=120)
 
         self.names_list = []
         self.list_numbers_to_save = []
         self.black_list = []
+        self.loading = '' 
 
         def save_to_file():
             if self.list_numbers_to_save != []:
@@ -81,7 +86,6 @@ class FileEditorApp(tkinter.Tk):
                         else:
                             saved_filename = saved_filename.split('.')[0]
                             saved_filename = saved_filename + '.xlsx'
-                        print(self.name_var.get())
                         if self.name_var.get() == '1':
                             df = pd.DataFrame.from_dict(
                                 {
@@ -102,7 +106,6 @@ class FileEditorApp(tkinter.Tk):
                                 index=False,
                                 header=False,
                                 sheet_name='Список номеров')
-
                 except FileNotFoundError:
                     return
                 except Exception:
@@ -137,8 +140,9 @@ class FileEditorApp(tkinter.Tk):
                         self.table.heading(column, text=column)
                     rows = dataframe.to_numpy().tolist()
                     cleared_counter = 0
-                    exlcuded_counter = 0
+                    invalid_counter = 0
                     repeat_count = 0
+                    line_counter = 1
                     for row in rows:
                         row[1], corrected = delete_symbols_from_number(
                             str(row[1]))
@@ -155,7 +159,7 @@ class FileEditorApp(tkinter.Tk):
                                 else:
                                     repeat_count += 1
                             else:
-                                exlcuded_counter += 1
+                                invalid_counter += 1
                         elif len(row[1]) == 11:
                             if not row[1].startswith('7'):
                                 if 900 <= int(row[1][1:4]) <= 999:
@@ -171,7 +175,7 @@ class FileEditorApp(tkinter.Tk):
                                     else:
                                         repeat_count += 1
                                 else:
-                                    exlcuded_counter += 1
+                                    invalid_counter += 1
                             else:
                                 if 900 <= int(row[1][1:4]) <= 999:
                                     if (not row[1] in 
@@ -185,27 +189,29 @@ class FileEditorApp(tkinter.Tk):
                                     else:
                                         repeat_count += 1
                                 else:
-                                    exlcuded_counter += 1
+                                    invalid_counter += 1
                         else:
-                            exlcuded_counter += 1
-                        self.label_all_numbers[
-                            'text'] = f'Обработано: {length_before_clean}'
-                        self.label_changed_numbers[
-                            'text'] = f'Исправлено: {cleared_counter}'
-                        self.label_excluded_numbers[
-                            'text'] = f'Исключено: {exlcuded_counter}'
-                        self.label_repeat_numbers[
-                            'text'] = f'Повторяющиеся: {repeat_count}'
-                        corrected_nums = (length_before_clean 
-                                          - exlcuded_counter
-                                          - repeat_count)
-                        self.label_correct_numbers[
-                            'text'] = f'Корректные номера: {corrected_nums}'
+                            invalid_counter += 1
+                    corrected_nums = (length_before_clean 
+                                        - invalid_counter
+                                        - repeat_count)
+                    excluded = (invalid_counter + repeat_count)
+                    self.label_all_numbers[
+                        'text'] = f'Обработано: {length_before_clean}'
+                    self.label_changed_numbers[
+                        'text'] = f'Исправлено: {cleared_counter}'
+                    self.label_invalid_numbers[
+                        'text'] = f'Неисправно: {invalid_counter}'
+                    self.label_repeat_numbers[
+                        'text'] = f'Повторяющиеся: {repeat_count}'
+                    self.label_excluded_numbers[
+                        'text'] = f'Исключено: {excluded}'
+                    self.label_correct_numbers[
+                        'text'] = f'Корректные номера: {corrected_nums}'
             except FileNotFoundError:
                 return
             except Exception:
                 messagebox.showerror('Информация', 'Ошибка при чтении файла')
-
         self.table_workplace = tkinter.LabelFrame(
             self, height=150, text='Данные таблицы')
         self.table_workplace.place(x=10, y=160, relwidth=.985, relheight=.85)
