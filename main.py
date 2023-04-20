@@ -300,10 +300,10 @@ class FileEditorApp(tkinter.Tk):
         def delete_symbols_from_number(arg: str):
             is_correct = 0
             avoid_sym = [' ', '-', '/', '+', '_', '*', ',', '(', ')', '.']
-            if arg[-2] == '.' and len(arg) > 10:
-                arg = arg.split('.')[0]
+            if len(arg) > 10:
+                if arg[-2] == '.':
+                    arg = arg.split('.')[0]
             for sym in avoid_sym:
-
                 if sym in arg:
                     arg = ''.join(arg.split(sym))
                     is_correct = 1
