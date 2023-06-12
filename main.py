@@ -135,8 +135,8 @@ class FileEditorApp(tkinter.Tk):
             self.table, orient='horizontal', command=self.table.xview)
         self.table.configure(
             xscrollcommand=treescrollx.set, yscrollcommand=treescrolly.set)
-        treescrollx.pack(side="bottom", fill="x")
-        treescrolly.pack(side="right", fill="y")
+        treescrollx.pack(side='bottom', fill='x')
+        treescrolly.pack(side='right', fill='y')
 
         def save_to_file():
             if self.list_numbers_to_save != []:
@@ -465,6 +465,6 @@ class FileEditorApp(tkinter.Tk):
             return None
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = FileEditorApp()
     app.mainloop()
