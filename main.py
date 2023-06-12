@@ -2,7 +2,6 @@ import os
 import sys
 import tkinter
 from tkinter import PhotoImage, StringVar, filedialog, messagebox, ttk
-
 import pandas as pd
 
 
@@ -143,35 +142,58 @@ class FileEditorApp(tkinter.Tk):
             if self.list_numbers_to_save != []:
                 saved_filename = filedialog.asksaveasfilename(
                 initialdir='C:\\Users\\{oper}\\Desktop',
+                defaultextension=[('Excel', '*.xlsx'), 
+                                   ('CSV', '*.csv'),],
                 title='Сохранить файл',
-                filetype=([('Excel', '*.xlsx')]))
+                filetypes=([('Excel', '*.xlsx'),
+                            ('CSV', '*.csv'),]))
                 try:
                     if saved_filename != '':
-                        if not '.xlsx' in saved_filename:
-                            saved_filename = saved_filename + '.xlsx'
+                        if '.csv' in saved_filename:
+                            if self.name_var.get() == '1':
+                                csv_array = []
+                                for name in self.names_list:
+                                    csv_array.append(''.join(str(name).split(' ')))
+                                df = pd.DataFrame.from_dict(
+                                        {
+                                    'Phone': self.list_numbers_to_save, 
+                                    'Name': self.names_list}
+                                    )
+                                df.to_csv(
+                                    saved_filename,
+                                    encoding='utf-16',
+                                    sep=',',
+                                    index=False,
+                                    header=False)
+                            else:
+                                df = pd.DataFrame.from_dict(
+                                    {'Phone': self.list_numbers_to_save}
+                                    )
+                                df.to_csv(
+                                    saved_filename,
+                                    index=False,
+                                    header=False,)
                         else:
-                            saved_filename = saved_filename.split('.')[0]
-                            saved_filename = saved_filename + '.xlsx'
-                        if self.name_var.get() == '1':
-                            df = pd.DataFrame.from_dict(
-                                {
-                                'Phone': self.list_numbers_to_save, 
-                                'Name': self.names_list}
-                                )
-                            df.to_excel(
-                                saved_filename,
-                                index=False,
-                                header=False,
-                                sheet_name='Список номеров и ФИО')
-                        else:
-                            df = pd.DataFrame.from_dict(
-                                {'Phone': self.list_numbers_to_save}
-                                )
-                            df.to_excel(
-                                saved_filename,
-                                index=False,
-                                header=False,
-                                sheet_name='Список номеров')
+                            if self.name_var.get() == '1':
+                                df = pd.DataFrame.from_dict(
+                                        {
+                                    'Phone': self.list_numbers_to_save, 
+                                    'Name': self.names_list}
+                                    )
+                                df.to_excel(
+                                    saved_filename,
+                                    index=False,
+                                    header=False,
+                                    sheet_name='Список номеров и ФИО')
+                            else:
+                                df = pd.DataFrame.from_dict(
+                                    {'Phone': self.list_numbers_to_save}
+                                    )
+                                df.to_excel(
+                                    saved_filename,
+                                    index=False,
+                                    header=False,
+                                    sheet_name='Список номеров')
                 except FileNotFoundError:
                     return
                 except Exception:
