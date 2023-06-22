@@ -196,14 +196,14 @@ class FileEditorApp(tkinter.Tk):
                                     sheet_name='Список номеров')
                 except FileNotFoundError:
                     return
-                except Exception:
-                    return
+                except Exception as e:
+                    messagebox.showerror('Ошибка', f'Описание: {e}')
 
         def get_file_to_upload():
             filename = filedialog.askopenfilename(
                 initialdir='C:\\Users\\{oper}\\Desktop',
                 title='Выберите файл',
-                filetype=(
+                filetypes=(
                         ('Excel', '*.xlsx'),
                         ('Excel', '*.xls')))
             create_table_data(filename)
@@ -220,14 +220,19 @@ class FileEditorApp(tkinter.Tk):
                         try:
                             data = data[
                                 [' Статус', ' Телефон',
-                                 ' ФИО Персоны', ' Шаблон']
+                                 ' Персона', ' Шаблон контракта']
                                 ]
                             cols = list(data.columns)
                             phone_col_idx = 1
                             return data, cols, phone_col_idx
                         except:
-                            phone_col_idx = 0
-                            return data, None, phone_col_idx
+                            try:
+                                data = data[[' Телефон']]
+                                phone_col_idx = 0
+                                return data, None, phone_col_idx
+                            except:    
+                                phone_col_idx = 0
+                                return data, None, phone_col_idx
                         
                     dataframe, columns, idx = get_file_columns(dataframe)
                     if columns is None:
@@ -297,6 +302,8 @@ class FileEditorApp(tkinter.Tk):
                                         - invalid_counter
                                         - repeat_count)
                     excluded = (invalid_counter + repeat_count)
+                    f_name = name.split('/')[-1]
+                    self.title(f'Редактор сервисных звонков. Основной файл: {f_name}')
                     self.label_all_numbers[
                         'text'] = f'Обработано: {length_before_clean}'
                     self.label_changed_numbers[
@@ -316,8 +323,8 @@ class FileEditorApp(tkinter.Tk):
                         self.exclude_sec_button.config(state='normal')
             except FileNotFoundError:
                 return
-            except Exception:
-                messagebox.showerror('Информация', 'Ошибка при чтении файла')
+            except Exception as e:
+                messagebox.showerror('Ошибка', f'Описание: {e}')
         
         def delete_symbols_from_number(arg: str):
             is_correct = 0
@@ -410,8 +417,8 @@ class FileEditorApp(tkinter.Tk):
                         self.exclude_sec_button.config(state='normal')
             except FileNotFoundError:
                 return
-            except Exception:
-                messagebox.showerror('Информация', 'Ошибка при чтении файла')
+            except Exception as e:
+                messagebox.showerror('Информация', f'Описание: {e}')
 
         def remove_numbers():
             removed = 0
@@ -454,6 +461,7 @@ class FileEditorApp(tkinter.Tk):
             self.list_numbers_to_save.clear()
             self.sec_list_numbers_to_save.clear()
             self.names_list.clear()
+            self.title('Редактор сервисных звонков')
             clear_table()
             self.exclude_sec_button.config(state='disabled')
             self.name_var.set(0)
