@@ -231,8 +231,17 @@ class FileEditorApp(tkinter.Tk):
                                 phone_col_idx = 0
                                 return data, None, phone_col_idx
                             except:    
-                                phone_col_idx = 0
-                                return data, None, phone_col_idx
+                                try:
+                                    col = list(data.columns)[0]
+                                    if col.lower().strip() in (
+                                        'телефон', 'тел', 'тел.', 'телефон.',  'телеф.', 'телеф'
+                                        ):
+                                        phone_col_idx = 0
+                                        data = data[[col]]
+                                        return data, None, phone_col_idx
+                                except:
+                                    phone_col_idx = 0
+                                    return data, phone_col_idx
                         
                     dataframe, columns, idx = get_file_columns(dataframe)
                     if columns is None:
@@ -349,9 +358,34 @@ class FileEditorApp(tkinter.Tk):
                 if filename != '':
                     self.sec_list_numbers_to_save.clear()
                     dataframe = pd.read_excel(filename)
+                    def get_file_columns(data):
+                        try:
+                            data = data[
+                                [' Статус', ' Телефон',
+                                 ' Персона', ' Шаблон контракта']
+                                ]
+                            phone_col_idx = 1
+                            return data, phone_col_idx
+                        except:
+                            try:
+                                data = data[[' Телефон']]
+                                phone_col_idx = 0
+                                return data, phone_col_idx
+                            except:
+                                try:
+                                    col = list(data.columns)[0]
+                                    if col.lower().strip() in (
+                                        'телефон', 'тел', 'тел.', 'телефон.',  'телеф.', 'телеф'
+                                        ):
+                                        phone_col_idx = 0
+                                        data = data[[col]]
+                                        return data, phone_col_idx
+                                except:
+                                    phone_col_idx = 0
+                                    return data, phone_col_idx
+                    dataframe, idx = get_file_columns(dataframe)
                     length_before_clean = len(dataframe)
                     rows = dataframe.to_numpy().tolist()
-                    idx = 0
                     cleared_counter = 0
                     invalid_counter = 0
                     repeat_count = 0
