@@ -1,6 +1,6 @@
 # phone_numbers_corrector
 
-Program for correcting list of phone numbers
+Application for correcting list of phone numbers
 
 ### create virtual environment
 
