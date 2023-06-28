@@ -230,19 +230,10 @@ class FileEditorApp(tkinter.Tk):
                                 data = data[[' Телефон']]
                                 phone_col_idx = 0
                                 return data, None, phone_col_idx
-                            except:    
-                                try:
-                                    col = list(data.columns)[0]
-                                    if col.lower().strip() in (
-                                        'телефон', 'тел', 'тел.', 'телефон.',  'телеф.', 'телеф'
-                                        ):
-                                        phone_col_idx = 0
-                                        data = data[[col]]
-                                        return data, None, phone_col_idx
-                                except:
-                                    phone_col_idx = 0
-                                    return data, phone_col_idx
-                        
+                            except:
+                                phone_col_idx = 0
+                                return data, None, phone_col_idx
+
                     dataframe, columns, idx = get_file_columns(dataframe)
                     if columns is None:
                         columns = 'Телефон'
@@ -372,17 +363,9 @@ class FileEditorApp(tkinter.Tk):
                                 phone_col_idx = 0
                                 return data, phone_col_idx
                             except:
-                                try:
-                                    col = list(data.columns)[0]
-                                    if col.lower().strip() in (
-                                        'телефон', 'тел', 'тел.', 'телефон.',  'телеф.', 'телеф'
-                                        ):
-                                        phone_col_idx = 0
-                                        data = data[[col]]
-                                        return data, phone_col_idx
-                                except:
-                                    phone_col_idx = 0
-                                    return data, phone_col_idx
+                                phone_col_idx = 0
+                                return data, phone_col_idx
+
                     dataframe, idx = get_file_columns(dataframe)
                     length_before_clean = len(dataframe)
                     rows = dataframe.to_numpy().tolist()
