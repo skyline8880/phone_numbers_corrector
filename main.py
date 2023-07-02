@@ -227,12 +227,30 @@ class FileEditorApp(tkinter.Tk):
                             return data, cols, phone_col_idx
                         except:
                             try:
-                                data = data[[' Телефон']]
-                                phone_col_idx = 0
-                                return data, None, phone_col_idx
+                                data = data[
+                                    [' Дата', ' Телефон', ' Персона',
+                                    ' Группа длительности', ' Шаблон контракта', ' Тип']
+                                    ]
+                                cols = list(data.columns)
+                                phone_col_idx = 1
+                                return data, cols, phone_col_idx
                             except:
-                                phone_col_idx = 0
-                                return data, None, phone_col_idx
+                                try:
+                                    data = data[
+                                        [' Номенклатура', ' Телефон', ' Персона',
+                                        ' Дата оплаты', ' Секция номенклатуры', ' Статья дохода']
+                                        ]
+                                    cols = list(data.columns)
+                                    phone_col_idx = 1
+                                    return data, cols, phone_col_idx
+                                except:
+                                    try:
+                                        data = data[[' Телефон']]
+                                        phone_col_idx = 0
+                                        return data, None, phone_col_idx
+                                    except:
+                                        phone_col_idx = 0
+                                        return data, None, phone_col_idx
 
                     dataframe, columns, idx = get_file_columns(dataframe)
                     if columns is None:
